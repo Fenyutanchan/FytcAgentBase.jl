@@ -1,0 +1,5 @@
+[deps]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+FytcAgentBase = "e264e23d-ef72-48fd-9d64-804c4d95835d"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
