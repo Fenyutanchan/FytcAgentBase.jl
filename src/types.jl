@@ -49,6 +49,21 @@ Supertype for agent/crew memory backends (short-term, long-term, entity).
 abstract type AbstractMemory end
 
 """
+    ToolCall(id, name, arguments)
+
+A request, emitted by an [`AbstractLLM`](@ref), to invoke a tool. `arguments`
+maps parameter names to decoded values. `id` correlates the call with the
+[`Message`](@ref) (role `:tool`) that carries its result.
+"""
+struct ToolCall
+    id::String
+    name::String
+    arguments::Dict{String,Any}
+end
+ToolCall(name::AbstractString, arguments::AbstractDict = Dict{String,Any}()) =
+    ToolCall(string(name), string(name), Dict{String,Any}(arguments))
+
+"""
     MessageRole
 
 Allowed roles for a [`Message`](@ref): `:system`, `:user`, `:assistant`, `:tool`.
@@ -56,17 +71,37 @@ Allowed roles for a [`Message`](@ref): `:system`, `:user`, `:assistant`, `:tool`
 const MESSAGE_ROLES = (:system, :user, :assistant, :tool)
 
 """
-    Message(role::Symbol, content::AbstractString)
+    Message(role::Symbol, content::AbstractString; name, tool_calls, tool_call_id)
 
 A single chat message. `role` must be one of `$(MESSAGE_ROLES)`.
+
+Optional fields support function calling:
+- `name`: an optional speaker/tool name.
+- `tool_calls`: tool-call requests attached to an `:assistant` message.
+- `tool_call_id`: on a `:tool` message, the [`ToolCall`](@ref) `id` it answers.
 """
 struct Message
     role::Symbol
     content::String
+    name::Union{Nothing,String}
+    tool_calls::Vector{ToolCall}
+    tool_call_id::Union{Nothing,String}
 
-    function Message(role::Symbol, content::AbstractString)
+    function Message(
+        role::Symbol,
+        content::AbstractString;
+        name::Union{Nothing,AbstractString} = nothing,
+        tool_calls::AbstractVector{ToolCall} = ToolCall[],
+        tool_call_id::Union{Nothing,AbstractString} = nothing,
+    )
         role ∈ MESSAGE_ROLES ||
             throw(ConfigError("invalid message role :$role; expected one of $(MESSAGE_ROLES)"))
-        return new(role, String(content))
+        return new(
+            role,
+            String(content),
+            name === nothing ? nothing : String(name),
+            collect(ToolCall, tool_calls),
+            tool_call_id === nothing ? nothing : String(tool_call_id),
+        )
     end
 end

@@ -25,7 +25,7 @@ include("config.jl")
 # Abstract types & value types
 export AbstractLLM, AbstractTool, AbstractEvent, AbstractMemory
 export AbstractEventListener
-export Message, MESSAGE_ROLES
+export Message, MESSAGE_ROLES, ToolCall
 
 # Errors
 export FytcAgentsError, ConfigError, LLMError, ToolError
