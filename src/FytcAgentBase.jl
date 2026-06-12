@@ -20,6 +20,8 @@ include("errors.jl")
 include("types.jl")
 include("events/Events.jl")
 include("events/listeners.jl")
+include("tools/spec.jl")
+include("tools/Tools.jl")
 include("config.jl")
 
 # Abstract types & value types
@@ -33,6 +35,9 @@ export FytcAgentsError, ConfigError, LLMError, ToolError
 # Events
 export EventBus, subscribe!, emit!, GenericEvent, LogEvent
 export CallableListener, ConsoleListener
+
+# Tools
+export ToolSpec, FunctionTool, spec, execute, json_schema_type, @tool
 
 # Config
 export getconfig
