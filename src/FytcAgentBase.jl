@@ -22,6 +22,8 @@ include("events/Events.jl")
 include("events/listeners.jl")
 include("tools/spec.jl")
 include("tools/Tools.jl")
+include("llm/LLM.jl")
+include("llm/mock.jl")
 include("config.jl")
 
 # Abstract types & value types
@@ -38,6 +40,9 @@ export CallableListener, ConsoleListener
 
 # Tools
 export ToolSpec, FunctionTool, spec, execute, json_schema_type, @tool
+
+# LLM
+export TokenUsage, LLMResponse, call, stream, MockLLM
 
 # Config
 export getconfig
