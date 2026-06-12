@@ -111,6 +111,13 @@ using Test
         @test execute(add, Dict{String,Any}("x" => 2.0, "y" => 3)) == 5
         # Missing argument errors.
         @test_throws ToolError execute(add, Dict{String,Any}("x" => 1))
+        # Zero-argument tools must build typed (non-Any) field vectors.
+        ping = @tool "Ping." function ping()
+            return "pong"
+        end
+        @test ping isa FunctionTool
+        @test isempty(spec(ping).parameters["required"])
+        @test execute(ping, Dict{String,Any}()) == "pong"
     end
 
     @testset "execute by ToolCall dispatch" begin

@@ -133,7 +133,9 @@ macro tool(description, fdef)
         (n, t) in zip(argnames, argtype_exprs)
     )
     required = Expr(:vect, (String(n) for n in argnames)...)
-    names_vec = Expr(:vect, (QuoteNode(n) for n in argnames)...)
+    # Typed literals (Symbol[...] / Type[...]) so zero-argument tools do not
+    # produce Vector{Any} and miss the FunctionTool constructor.
+    names_vec = Expr(:ref, :Symbol, (QuoteNode(n) for n in argnames)...)
     types_vec = Expr(:ref, :Type, (esc(t) for t in argtype_exprs)...)
 
     return quote
