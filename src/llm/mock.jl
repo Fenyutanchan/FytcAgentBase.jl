@@ -33,7 +33,7 @@ _as_response(s::AbstractString) = LLMResponse(s)
 MockLLM(responses::AbstractVector) =
     MockLLM(LLMResponse[_as_response(r) for r in responses], Vector{Message}[], 0)
 
-function call(llm::MockLLM, messages; tools = AbstractTool[], kwargs...)
+function call(llm::MockLLM, messages; tools = ToolSpec[], kwargs...)
     push!(llm.received, collect(Message, messages))
     llm.index += 1
     llm.index <= length(llm.responses) ||

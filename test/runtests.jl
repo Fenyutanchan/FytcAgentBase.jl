@@ -164,7 +164,7 @@ using Test
 
         history = Message[Message(:user, "What is 2 + 3?")]
         # First turn: the model asks for a tool call.
-        r1 = call(llm, history; tools = tools)
+        r1 = call(llm, history; tools = map(spec, tools))
         @test !isempty(r1.tool_calls)
         tc = r1.tool_calls[1]
         result = execute(tools, tc)
@@ -172,7 +172,7 @@ using Test
         push!(history, Message(:assistant, r1.content; tool_calls = r1.tool_calls))
         push!(history, Message(:tool, string(result); name = tc.name, tool_call_id = tc.id))
         # Second turn: the model produces the final answer.
-        r2 = call(llm, history; tools = tools)
+        r2 = call(llm, history; tools = map(spec, tools))
         @test isempty(r2.tool_calls)
         @test r2.content == "The sum is 5."
     end

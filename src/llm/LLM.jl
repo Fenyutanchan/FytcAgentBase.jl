@@ -40,13 +40,16 @@ LLMResponse(
 ) = LLMResponse(String(content), collect(ToolCall, tool_calls), usage, raw)
 
 """
-    call(llm::AbstractLLM, messages; tools = AbstractTool[], kwargs...) -> LLMResponse
+    call(llm::AbstractLLM, messages; tools = ToolSpec[], kwargs...) -> LLMResponse
 
-Send `messages` to `llm` and return an [`LLMResponse`]. `tools` advertises the
-callable tools available for function calling. Providers specialize this method;
-the fallback throws [`LLMError`](@ref).
+Send `messages` to `llm` and return an [`LLMResponse`]. `tools` is the
+**provider-facing** description of the callable tools available for function
+calling: a vector of [`ToolSpec`](@ref) (name + description + JSON schema), *not*
+the executable [`AbstractTool`](@ref) objects. Callers derive them with
+`map(spec, tools)` and keep the executable objects for [`execute`](@ref).
+Providers specialize this method; the fallback throws [`LLMError`](@ref).
 """
-function call(llm::AbstractLLM, messages; tools = AbstractTool[], kwargs...)
+function call(llm::AbstractLLM, messages; tools = ToolSpec[], kwargs...)
     throw(LLMError("call(::$(typeof(llm)), …) is not implemented"))
 end
 
