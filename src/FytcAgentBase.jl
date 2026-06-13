@@ -24,6 +24,7 @@ include("tools/spec.jl")
 include("tools/Tools.jl")
 include("llm/LLM.jl")
 include("llm/mock.jl")
+include("memory/Memory.jl")
 include("config.jl")
 
 # Abstract types & value types
@@ -43,6 +44,9 @@ export ToolSpec, FunctionTool, spec, execute, json_schema_type, @tool
 
 # LLM
 export TokenUsage, LLMResponse, call, stream, MockLLM
+
+# Memory
+export MemoryRecord, remember!, recall, reset!
 
 # Config
 export getconfig
