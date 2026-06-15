@@ -139,6 +139,41 @@ using Test
         @test r.content == "hi"
         @test isempty(r.tool_calls)
         @test r.usage.total_tokens == 0
+        @test r.finish_reason === nothing
+        r2 = LLMResponse("done"; finish_reason = "stop")
+        @test r2.finish_reason == "stop"
+    end
+
+    @testset "AbstractLLMResponse accessors" begin
+        # LLMResponse is a subtype
+        @test LLMResponse("x") isa AbstractLLMResponse
+
+        # Required accessors
+        r = LLMResponse("hello";
+            tool_calls = [ToolCall("c1", "f", Dict{String,Any}())],
+            usage = TokenUsage(; prompt = 3, completion = 2),
+            finish_reason = "stop",
+            raw = Dict("id" => "x"))
+        @test content(r) == "hello"
+        @test length(tool_calls(r)) == 1
+        @test usage(r).total_tokens == 5
+        # Optional accessors
+        @test finish_reason(r) == "stop"
+        @test raw(r) == Dict("id" => "x")
+
+        # Default nothing on bare response
+        r2 = LLMResponse("plain")
+        @test finish_reason(r2) === nothing
+        @test raw(r2) === nothing
+
+        # Fallback accessors throw on unknown type
+        struct _DummyResponse <: AbstractLLMResponse end
+        @test_throws MethodError content(_DummyResponse())
+        @test_throws MethodError tool_calls(_DummyResponse())
+        @test_throws MethodError usage(_DummyResponse())
+        # Optional accessors return nothing (no throw)
+        @test finish_reason(_DummyResponse()) === nothing
+        @test raw(_DummyResponse()) === nothing
     end
 
     @testset "MockLLM scripted responses" begin

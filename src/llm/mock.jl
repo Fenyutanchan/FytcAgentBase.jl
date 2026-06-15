@@ -1,7 +1,7 @@
 """
     llm/mock.jl
 
-[`MockLLM`](@ref): a scripted, zero-dependency [`AbstractLLM`](@ref) for tests
+[`MockLLM`](@ref): a scripted, zero-dependency [`AbstractLLMProvider`](@ref) for tests
 and examples. It returns pre-built [`LLMResponse`]s in order and records the
 messages it received, so agent/tool logic is testable without network access.
 """
@@ -21,17 +21,17 @@ llm = MockLLM([
 ])
 ```
 """
-mutable struct MockLLM <: AbstractLLM
-    responses::Vector{LLMResponse}
+mutable struct MockLLM <: AbstractLLMProvider
+    responses::Vector{AbstractLLMResponse}
     received::Vector{Vector{Message}}
     index::Int
 end
 
-_as_response(r::LLMResponse) = r
+_as_response(r::AbstractLLMResponse) = r
 _as_response(s::AbstractString) = LLMResponse(s)
 
 MockLLM(responses::AbstractVector) =
-    MockLLM(LLMResponse[_as_response(r) for r in responses], Vector{Message}[], 0)
+    MockLLM(AbstractLLMResponse[_as_response(r) for r in responses], Vector{Message}[], 0)
 
 function call(llm::MockLLM, messages; tools = ToolSpec[], kwargs...)
     push!(llm.received, collect(Message, messages))

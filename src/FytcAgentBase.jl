@@ -28,7 +28,7 @@ include("memory/Memory.jl")
 include("config.jl")
 
 # Abstract types & value types
-export AbstractLLM, AbstractTool, AbstractEvent, AbstractMemory
+export AbstractLLMProvider, AbstractLLMResponse, AbstractTool, AbstractEvent, AbstractMemory
 export AbstractEventListener
 export Message, MESSAGE_ROLES, ToolCall
 
@@ -44,6 +44,7 @@ export ToolSpec, FunctionTool, spec, execute, json_schema_type, @tool
 
 # LLM
 export TokenUsage, LLMResponse, call, stream, MockLLM
+export content, tool_calls, usage, finish_reason, raw
 
 # Memory
 export MemoryRecord, remember!, recall, reset!

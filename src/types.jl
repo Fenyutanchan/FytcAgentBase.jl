@@ -7,13 +7,26 @@ methods (e.g. LLM `call`, tool `run`) are implemented in later phases.
 """
 
 """
-    AbstractLLM
+    AbstractLLMProvider
 
 Supertype for all language-model providers. Concrete providers (e.g. an
 OpenAI-compatible backend) subtype this and specialize [`call`](@ref) /
 [`stream`](@ref).
 """
-abstract type AbstractLLM end
+abstract type AbstractLLMProvider end
+
+"""
+    AbstractLLMResponse
+
+Supertype for all LLM response values. Concrete providers return a subtype
+from [`call`](@ref). The standard accessor interface (defined in
+`llm/LLM.jl`) consists of:
+
+**Required (must implement):** [`content`](@ref), [`tool_calls`](@ref),
+[`usage`](@ref)
+**Optional (default `nothing`):** [`finish_reason`](@ref), [`raw`](@ref)
+"""
+abstract type AbstractLLMResponse end
 
 """
     AbstractTool
@@ -51,7 +64,7 @@ abstract type AbstractMemory end
 """
     ToolCall(id, name, arguments)
 
-A request, emitted by an [`AbstractLLM`](@ref), to invoke a tool. `arguments`
+A request, emitted by an [`AbstractLLMProvider`](@ref), to invoke a tool. `arguments`
 maps parameter names to decoded values. `id` correlates the call with the
 [`Message`](@ref) (role `:tool`) that carries its result.
 """
