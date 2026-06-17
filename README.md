@@ -7,6 +7,16 @@ and configuration helpers.
 **Dependencies:** Julia stdlib only (`Dates`, `Logging`, `UUIDs`) — no
 third-party packages, by design.
 
+## Development
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+This repository is the standalone source for `FytcAgentBase`. In the
+FytcAgents integration workspace it is consumed as a git submodule at
+`FytcAgentBase/`.
+
 ## Key types
 
 | Type | Purpose |
